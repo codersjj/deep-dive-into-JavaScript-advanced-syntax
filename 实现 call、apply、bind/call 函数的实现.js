@@ -7,9 +7,11 @@ Function.prototype.jjCall = function (thisArg, ...argArray) {
   thisArg = (thisArg !== null && thisArg !== undefined) ? Object(thisArg) : globalThis
 
   // 3. 调用需要被执行的函数
-  thisArg.fn = fn
-  const res = thisArg.fn(...argArray)
-  delete thisArg.fn
+  // 使用 ES6 的 Symbol 给 thisArg 添加一个独一无二的属性，以免覆盖 thisArg 上可能存在的原有属性（fn）
+  const fnKey = Symbol()
+  thisArg[fnKey] = fn
+  const res = thisArg[fnKey](...argArray)
+  delete thisArg[fnKey]
 
   // 4. 将最终的结果返回出去
   return res
