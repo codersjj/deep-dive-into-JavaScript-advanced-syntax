@@ -12,7 +12,20 @@ Function.prototype.jjApply = function(thisArg, argArray) {
   // 以 this 被隐式绑定的方式调用需要被执行的函数
   const fnKey = Symbol()
   thisArg[fnKey] = fn
-  const res = thisArg[fnKey](...argArray)
+  let res
+  // 处理没有传参数的情况
+  // 写法一：
+  // if (!argArray) { // 没有传参数
+  //   res = thisArg[fnKey]()
+  // } else { // 有传参数
+  //   res = thisArg[fnKey](...argArray)
+  // }
+  // 写法二：
+  // argArray = argArray ? argArray : []
+  // res = thisArg[fnKey](...argArray)
+  // 写法三：
+  argArray = argArray || []
+  res = thisArg[fnKey](...argArray)
   // 调用完后再删掉
   delete thisArg[fnKey]
 
@@ -27,9 +40,23 @@ function sum(num1, num2) {
 }
 
 // JavaScript 的函数的 apply 方法
+sum.apply()
+sum.apply(undefined)
+sum.apply(null)
+sum.apply({ name: 'zhj' })
+sum.apply(0)
+sum.apply('')
+sum.apply(123, null)
 const applyRes = sum.apply({ name: 'zhj' }, [10, 20])
 console.log('applyRes:', applyRes);
 
 // 自己实现的函数的 apply 方法
+sum.jjApply()
+sum.jjApply(undefined)
+sum.jjApply(null)
+sum.jjApply({ name: 'zhj' })
+sum.jjApply(0)
+sum.jjApply('')
+sum.jjApply(123, null)
 const jjApplyRes = sum.jjApply({ name: 'zhj' }, [10, 20])
 console.log('jjApplyRes:', jjApplyRes);
