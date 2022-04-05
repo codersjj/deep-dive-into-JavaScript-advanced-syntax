@@ -10,7 +10,18 @@ const obj = {
   age: 20
 }
 
-const objProxy = new Proxy(obj, {})
+const objProxy = new Proxy(obj, {
+  // 获取值时的捕获器
+  get(target, property) {
+    console.log(`监听到对象的 ${property} 属性被访问了~`, target);
+    return target[property]
+  },
+  // 设置值时的捕获器
+  set(target, property, value) {
+    console.log(`监听到对象的 ${property} 属性被设置值了~`, target);
+    target[property] = value
+  }
+})
 
 console.log(objProxy.name);
 console.log(objProxy.age);
