@@ -77,3 +77,25 @@ watchFn(function() {
   console.log('监听 info 对象 address 属性的变化 ~ 2', info.address);
 })
 // 当期存在的问题 2：真实开发中会有多个对象，它们都需要进行监听
+
+
+// obj 对象
+// name 属性 -> depend
+// age 属性 -> depend
+const objMap = new Map()
+objMap.set('name', 'nameDepend')
+objMap.set('age', 'ageDepend')
+
+// info 对象
+// address 属性 -> depend
+const infoMap = new Map()
+infoMap.set('address', 'addressDepend')
+
+const targetMap = new WeakMap()
+targetMap.set(obj, objMap)
+targetMap.set(info, infoMap)
+
+// 之后当某个对象的某个属性改变时，我们就可以根据目标对象和属性名拿到对应的 depend 了，比如获取 obj.name 的 depend：
+const depend = targetMap.get(obj).get('name')
+// 然后就可以通过 depend 的 notify() 方法去执行相应的响应式函数了
+depend.notify()
