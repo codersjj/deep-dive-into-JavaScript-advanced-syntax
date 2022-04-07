@@ -51,7 +51,29 @@ function bar() {
   console.log('普通的其它函数，不需要响应式');
 }
 
+watchFn(function() {
+  console.log('obj 对象的 age 属性发生变化时需要执行的内容 1~', objProxy.age);
+})
+watchFn(function() {
+  console.log('obj 对象的 age 属性发生变化时需要执行的内容 2~', objProxy.age);
+})
+
 // obj 对象 name 属性的值改变了，自动去执行相应的响应式函数
 objProxy.name = 'wy'
 objProxy.name = 'mzd'
 objProxy.name = 'zel'
+
+objProxy.age = 30
+// 当期存在的问题 1：不管 obj 对象的哪个属性的值改变了，传入 watchFn 的函数后续都会被调用，而没有进行区分
+
+const info = {
+  address: '上海市'
+}
+
+watchFn(function() {
+  console.log('监听 info 对象 address 属性的变化 ~ 1', info.address);
+})
+watchFn(function() {
+  console.log('监听 info 对象 address 属性的变化 ~ 2', info.address);
+})
+// 当期存在的问题 2：真实开发中会有多个对象，它们都需要进行监听
