@@ -26,6 +26,12 @@ function watchFn(fn) {
   activeReactiveFn = null
 }
 
+function watchFnLazily(sourceFn, fn) {
+  activeReactiveFn = fn
+  sourceFn()
+  activeReactiveFn = null
+}
+
 // 封装一个获取 depend 的函数
 const targetMap = new WeakMap()
 function getDepend(target, property) {
@@ -75,25 +81,41 @@ const objProxy = new Proxy(obj, {
 })
 
 watchFn(function() {
+  console.log('-------- watchFn obj name 第一个函数 开始 --------');
+  const newName = objProxy.name
+  console.log('哈哈哈', objProxy.name);
+  console.log('-------- watchFn obj name 第一个函数 结束 --------');
+})
+
+watchFnLazily(() => objProxy.name, function() {
   console.log('-------- obj name 第一个函数 开始 --------');
   const newName = objProxy.name
   console.log('哈哈哈', objProxy.name);
   console.log('-------- obj name 第一个函数 结束 --------');
 })
-watchFn(function() {
+watchFnLazily(() => objProxy.name, function() {
   console.log(objProxy.name, 'baz 函数被调用了~');
 })
 
-watchFn(function() {
+watchFnLazily(() => objProxy.age, function() {
   console.log('obj 对象的 age 属性发生变化时需要执行的内容 1~', objProxy.age);
 })
-watchFn(function() {
+watchFnLazily(() => objProxy.age, function() {
   console.log('obj 对象的 age 属性发生变化时需要执行的内容 2~', objProxy.age);
 })
 
-watchFn(() => {
+watchFnLazily(() => {
+  objProxy.name
+  objProxy.age
+}, () => {
   console.log(objProxy.name, '新函数');
   console.log(objProxy.age, '新函数');
+})
+
+// 只会监听 obj 的 age 的变化，obj 的 name 改变时不会重新执行下面的响应函数
+watchFnLazily(() => objProxy.age, () => {
+  console.log(objProxy.name, '新函数2');
+  console.log(objProxy.age, '新函数2');
 })
 
 // obj 对象属性的值改变了，自动去执行相应的响应式函数
@@ -103,3 +125,4 @@ objProxy.name = 'wy'
 // objProxy.name = 'zel'
 
 objProxy.age = 30
+objProxy.name = '小王'
