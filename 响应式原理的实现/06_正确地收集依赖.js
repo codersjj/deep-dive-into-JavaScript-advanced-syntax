@@ -1,11 +1,16 @@
+// 保存当前需要收集的响应式函数
+let activeReactiveFn = null
+
 // 封装一个依赖收集类（用来收集某个对象某个属性所有的依赖）
 class Depend {
   constructor() {
     this.reactiveFns = []
   }
 
-  addDepend(fn) {
-    this.reactiveFns.push(fn)
+  depend() {
+    if (activeReactiveFn) {
+      this.reactiveFns.push(activeReactiveFn)
+    }
   }
 
   notify() {
@@ -15,8 +20,6 @@ class Depend {
   }
 }
 
-// 保存当前需要收集的响应式函数
-let activeReactiveFn = null
 function watchFn(fn) {
   activeReactiveFn = fn
   fn()
@@ -57,8 +60,7 @@ const objProxy = new Proxy(obj, {
     // 根据目标对象和目标属性获取对应的 depend
     const depend = getDepend(target, property)
     // 往对应的 depend 对象中添加对应的响应函数
-    activeReactiveFn && depend.addDepend(activeReactiveFn)
-    // console.log('get ~ depend.reactiveFns', depend.reactiveFns);
+    depend.depend()
 
     return Reflect.get(target, property, receiver)
   },
@@ -68,7 +70,6 @@ const objProxy = new Proxy(obj, {
     // 在 set() 捕获器中 notify
     // 获取目标对象相应属性对应的 depend
     const depend = getDepend(target, property)
-    // console.log('set ~ depend.reactiveFns', depend.reactiveFns);
     depend.notify()
   }
 })
