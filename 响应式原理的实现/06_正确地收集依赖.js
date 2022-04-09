@@ -4,12 +4,12 @@ let activeReactiveFn = null
 // 封装一个依赖收集类（用来收集某个对象某个属性所有的依赖）
 class Depend {
   constructor() {
-    this.reactiveFns = []
+    this.reactiveFns = new Set()
   }
 
   depend() {
     if (activeReactiveFn) {
-      this.reactiveFns.push(activeReactiveFn)
+      this.reactiveFns.add(activeReactiveFn)
     }
   }
 
