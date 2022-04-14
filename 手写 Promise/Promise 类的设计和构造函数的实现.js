@@ -11,17 +11,20 @@ class JJPromise {
     this.value = undefined
     this.reason = undefined
 
+    this.onfulfilledFns = []
+    this.onrejectedFns = []
+
     const resolve = (value) => {
       if (this.status === PROMISE_STATUS_PENDING) {
         this.status = PROMISE_STATUS_FULFILLED
         this.value = value
         console.log('resolve 被调用了~');
-        // 这里没有使用 setTimeout，因为 setTimeout 是宏任务，而原生的 Promise 的 then 方法是微任务，所以这里使用 queueMicrotask() 方法将传入的函数延迟调用（延迟调用，但在本轮的主线程的事件循环中就会被执行）
         queueMicrotask(() => {
-          // 执行传给 then 方法的第一个回调函数（通过放在 queueMicrotask 中来保证此时 then 方法已执行，this.onFulfilled 已经被赋过值了）
-          if (typeof this.onfulfilled === 'function') {
-            this.onfulfilled(this.value)
-          }
+          this.onfulfilledFns.forEach(onfulfilledFn => {
+            if (typeof onfulfilledFn === 'function') {
+              onfulfilledFn(this.value)
+            }
+          })
         })
       }
     }
@@ -32,10 +35,11 @@ class JJPromise {
         this.reason = reason
         console.log('reject 被调用了~');
         queueMicrotask(() => {
-          // 执行传给 then 方法的第二个回调函数
-          if (typeof this.onrejected === 'function') {
-            this.onrejected(this.reason)
-          }
+          this.onrejectedFns.forEach(onrejectedFn => {
+            if (typeof onrejectedFn === 'function') {
+              onrejectedFn(this.reason)
+            }
+          })
         });
       }
     }
@@ -44,8 +48,9 @@ class JJPromise {
   }
 
   then(onfulfilled, onrejected) {
-    this.onfulfilled = onfulfilled
-    this.onrejected = onrejected
+    // 将成功的回调和失败的回调保存到数组中
+    this.onfulfilledFns.push(onfulfilled)
+    this.onrejectedFns.push(onrejected)
   }
 }
 
@@ -58,7 +63,13 @@ const promise = new JJPromise((resolve, reject) => {
 console.log('---------- 开始调用 then 方法  ----------');
 
 promise.then(res => {
-  console.log('res:', res);
+  console.log('res1:', res);
 }, err => {
-  console.log('err:', err);
+  console.log('err1:', err);
+})
+
+promise.then(res => {
+  console.log('res2:', res);
+}, err => {
+  console.log('err2:', err);
 })
