@@ -60,6 +60,9 @@ class JJPromise {
   }
 
   then(onfulfilled, onrejected) {
+    const defaultOnFulfilled = (value) => value
+    onfulfilled = onfulfilled || defaultOnFulfilled
+
     const defaultOnRejected = (err) => { throw err }
     onrejected = onrejected || defaultOnRejected
 
@@ -88,7 +91,15 @@ class JJPromise {
 
   catch(onrejected) {
     // 执行 catch() 时应该去执行原来 then() 方法中的第二个回调
-    this.then(undefined, onrejected)
+    return this.then(undefined, onrejected)
+  }
+
+  finally(onfinally) {
+    this.then(() => {
+      onfinally()
+    }, () => {
+      onfinally()
+    })
   }
 }
 
@@ -103,9 +114,14 @@ const promise = new JJPromise((resolve, reject) => {
 // console.log('---------- 开始调用 then 方法  ----------');
 
 promise.then(res => {
-  console.log('res:', res);
+  console.log('then1 res1:', res);
+  return 1111
+}).then(res => {
+  console.log('then1 res2:', res);
 }).catch(err => {
-  console.log('err:', err);
+  console.log('then1 err:', err);
+}).finally(() => {
+  console.log('then1 finally');
 })
 
 // 1. 同一个 Promise 对象可以多次调用 then() 方法
