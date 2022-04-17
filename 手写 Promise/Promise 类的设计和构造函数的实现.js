@@ -28,10 +28,7 @@ class JJPromise {
       if (this.status === PROMISE_STATUS_PENDING) {
         this.status = PROMISE_STATUS_FULFILLED
         this.value = value
-        console.log('resolve 被调用了~');
         queueMicrotask(() => {
-          // console.log('resolve ~ this.onfulfilledFns:', this.onfulfilledFns);
-          // console.log('this.value:', this.value);
           this.onfulfilledFns.forEach(onfulfilledFn => {
             if (typeof onfulfilledFn === 'function') {
               onfulfilledFn(this.value)
@@ -45,10 +42,7 @@ class JJPromise {
       if (this.status === PROMISE_STATUS_PENDING) {
         this.status = PROMISE_STATUS_REJECTED
         this.reason = reason
-        console.log('reject 被调用了~');
         queueMicrotask(() => {
-          // console.log('reject ~ this.onrejectedFns:', this.onrejectedFns);
-          // console.log('this.reason:', this.reason);
           this.onrejectedFns.forEach(onrejectedFn => {
             if (typeof onrejectedFn === 'function') {
               onrejectedFn(this.reason)
@@ -66,6 +60,9 @@ class JJPromise {
   }
 
   then(onfulfilled, onrejected) {
+    const defaultOnRejected = (err) => { throw err }
+    onrejected = onrejected || defaultOnRejected
+
     return new JJPromise((resolve, reject) => {
       // 如果在调用 then() 方法时状态已经确定下来了，则根据状态直接执行对应的回调函数
       // 关键：resolve 或 reject 时需要拿到上一个 then() 方法中回调函数的返回值
@@ -79,22 +76,25 @@ class JJPromise {
       }
       // 如果状态为 pending，将成功的回调和失败的回调保存到数组中
       if (this.status === PROMISE_STATUS_PENDING) {
-        this.onfulfilledFns.push((value) => {
+        if (typeof onfulfilled === 'function') this.onfulfilledFns.push((value) => {
           execFnWithErrorCatch(onfulfilled, value, resolve, reject)
         })
-        this.onrejectedFns.push((reason) => {
+        if (typeof onrejected === 'function') this.onrejectedFns.push((reason) => {
           execFnWithErrorCatch(onrejected, reason, resolve, reject)
         })
       }
     })
   }
+
+  catch(onrejected) {
+    // 执行 catch() 时应该去执行原来 then() 方法中的第二个回调
+    this.then(undefined, onrejected)
+  }
 }
 
 const promise = new JJPromise((resolve, reject) => {
-  console.log('executor 执行了~', '状态：pending');
   setTimeout(() => {
-    // console.log('new Promise 中的 setTimeout 回调执行了~');
-    // reject(222)
+    reject(222)
     resolve(111)
   }, 2000);
   // throw new Error('executor error message')
@@ -102,28 +102,34 @@ const promise = new JJPromise((resolve, reject) => {
 
 // console.log('---------- 开始调用 then 方法  ----------');
 
-// 1. 同一个 Promise 对象可以多次调用 then() 方法
-// promise.then(res => {
-//   console.log('res1:', res);
-// }, err => {
-//   console.log('err1:', err);
-// })
+promise.then(res => {
+  console.log('res:', res);
+}).catch(err => {
+  console.log('err:', err);
+})
 
-// promise.then(res => {
-//   console.log('res2:', res);
-// }, err => {
-//   console.log('err2:', err);
-// })
+// 1. 同一个 Promise 对象可以多次调用 then() 方法
+promise.then(res => {
+  console.log('res1:', res);
+}, err => {
+  console.log('err1:', err);
+})
+
+promise.then(res => {
+  console.log('res2:', res);
+}, err => {
+  console.log('err2:', err);
+})
 
 // 2. 在 Promise 的状态确定之后可以再次调用 then() 方法
-// setTimeout(() => {
-//   console.log('setTimeout 中的 promise.then() 执行了~');
-//   promise.then(res => {
-//     console.log('setTimeout res:', res);
-//   }, err => {
-//     console.log('setTimeout err:', err);
-//   })
-// }, 3000);
+setTimeout(() => {
+  console.log('setTimeout 中的 promise.then() 执行了~');
+  promise.then(res => {
+    console.log('setTimeout res:', res);
+  }, err => {
+    console.log('setTimeout err:', err);
+  })
+}, 3000);
 
 // 3. Promise 的 then() 可以链式调用
 promise
@@ -141,30 +147,3 @@ promise
   }, err => {
     console.log('---------- 链式调用 ~ err2:', err);
   })
-
-// const p = new Promise(resolve => {
-//   setTimeout(() => {
-//     resolve(23)
-//   }, 2000);
-// })
-
-// p.then(res => {
-//   console.log('res1:', res);
-// }, err => {
-//   console.log('err1:', err);
-// })
-
-// p.then(res => {
-//   console.log('res2:', res);
-// }, err => {
-//   console.log('err2:', err);
-// })
-
-// setTimeout(() => {
-//   console.log('setTimeout 中的 p.then() 执行了~');
-//   p.then(res => {
-//     console.log('p setTimeout res:', res);
-//   }, err => {
-//     console.log('p setTimeout err:', err);
-//   })
-// }, 3000);
