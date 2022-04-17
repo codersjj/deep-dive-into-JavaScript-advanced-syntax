@@ -4,6 +4,16 @@ const PROMISE_STATUS_PENDING = 'pending'
 const PROMISE_STATUS_FULFILLED = 'fulfilled'
 const PROMISE_STATUS_REJECTED = 'rejected'
 
+// 工具函数
+function execFnWithErrorCatch(execFn, value, resolve, reject) {
+  try {
+    const res = execFn(value)
+    resolve(res)
+  } catch (err) {
+    reject(err)
+  }
+}
+
 class JJPromise {
   constructor(executor) {
     this.status = PROMISE_STATUS_PENDING
@@ -60,41 +70,20 @@ class JJPromise {
       // 如果在调用 then() 方法时状态已经确定下来了，则根据状态直接执行对应的回调函数
       // 关键：resolve 或 reject 时需要拿到上一个 then() 方法中回调函数的返回值
       if (this.status === PROMISE_STATUS_FULFILLED && typeof onfulfilled === 'function') {
-        try {
-          const res = onfulfilled(this.value)
-          resolve(res)
-        } catch (err) {
-          reject(err)
-        }
+        execFnWithErrorCatch(onfulfilled, this.value, resolve, reject)
         return
       }
       if (this.status === PROMISE_STATUS_REJECTED && typeof onrejected === 'function') {
-        try {
-          const res = onrejected(this.reason)
-          // 注意：Promise 的 then() 方法链式调用时，上一个 then() 方法中的第二个回调函数中除非抛出异常，否则其返回值应该还是交给 resolve() 处理
-          resolve(res)
-        } catch (err) {
-          reject(err)
-        }
+        execFnWithErrorCatch(onrejected, this.reason, resolve, reject)
         return
       }
       // 如果状态为 pending，将成功的回调和失败的回调保存到数组中
       if (this.status === PROMISE_STATUS_PENDING) {
         this.onfulfilledFns.push((value) => {
-          try {
-            const res = onfulfilled(value)
-            resolve(res)
-          } catch (err) {
-            reject(err)
-          }
+          execFnWithErrorCatch(onfulfilled, value, resolve, reject)
         })
         this.onrejectedFns.push((reason) => {
-          try {
-            const res = onrejected(reason)
-            resolve(res)
-          } catch (err) {
-            reject(err)
-          }
+          execFnWithErrorCatch(onrejected, reason, resolve, reject)
         })
       }
     })
