@@ -109,12 +109,81 @@ class JJPromise {
   static reject(reason) {
     return new JJPromise((resolve, reject) => reject(reason))
   }
+
+  static all(promises) {
+    return new JJPromise((resolve, reject) => {
+      // 关键问题：什么时候调 resolve() 方法，什么时候调 reject() 方法
+      const values = []
+      promises.forEach(promise => {
+        promise.then(res => {
+          values.push(res)
+          if (values.length === promises.length) {
+            resolve(values)
+          }
+        }, err => {
+          reject(err)
+        })
+      })
+    })
+  }
+
+  static allSettled(promises) {
+    return new JJPromise((resolve, reject) => {
+      // 关键问题：什么时候调 resolve() 方法，什么时候调 reject() 方法
+      const results = []
+      promises.forEach(promise => {
+        promise.then(res => {
+          results.push({
+            status: PROMISE_STATUS_FULFILLED,
+            value: res
+          })
+          if (results.length === promises.length) {
+            resolve(results)
+          }
+        }, err => {
+          results.push({
+            status: PROMISE_STATUS_REJECTED,
+            reason: err
+          })
+          if (results.length === promises.length) {
+            resolve(results)
+          }
+        })
+      })
+    })
+  }
 }
 
-JJPromise.resolve("哈哈哈").then(res => {
-  console.log('res:', res);
+// JJPromise.resolve("哈哈哈").then(res => {
+//   console.log('res:', res);
+// })
+
+// JJPromise.reject("error message").catch(err => {
+//   console.log('err:', err);
+// })
+
+const p1 = new JJPromise(resolve => {
+  setTimeout(() => {
+    resolve(111)
+  }, 1000)
+})
+const p2 = new JJPromise((resolve, reject) => {
+  setTimeout(() => {
+    reject(222)
+  }, 2000)
+})
+const p3 = new JJPromise(resolve => {
+  setTimeout(() => {
+    resolve(333)
+  }, 3000)
 })
 
-JJPromise.reject("error message").catch(err => {
+JJPromise.all([p1, p2, p3]).then(res => {
+  console.log('res:', res);
+}).catch(err => {
   console.log('err:', err);
+})
+
+JJPromise.allSettled([p1, p2, p3]).then(res => {
+  console.log('res:', res);
 })
