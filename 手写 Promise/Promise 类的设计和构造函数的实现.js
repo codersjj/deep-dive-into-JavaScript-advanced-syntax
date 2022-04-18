@@ -152,6 +152,37 @@ class JJPromise {
       })
     })
   }
+
+  static race(promises) {
+    return new JJPromise((resolve, reject) => {
+      promises.forEach(promise => {
+        promise.then(res => {
+          resolve(res)
+        }, err => {
+          reject(err)
+        })
+      })
+    })
+  }
+
+  static any(promises) {
+    const reasons = []
+    return new JJPromise((resolve, reject) => {
+      // 一旦拿到一个成功的结果就调用 resolve()
+      // 只有所有结果都失败时才调用 reject()
+      promises.forEach(promise => {
+        promise.then(res => {
+          resolve(res)
+        }, err => {
+          reasons.push(err)
+          if (reasons.length === promises.length) {
+            // AggregateError 是 ES12 新增的一种错误类型，用来一次表示多个错误
+            reject(new AggregateError(reasons))
+          }
+        })
+      })
+    })
+  }
 }
 
 // JJPromise.resolve("哈哈哈").then(res => {
@@ -162,9 +193,9 @@ class JJPromise {
 //   console.log('err:', err);
 // })
 
-const p1 = new JJPromise(resolve => {
+const p1 = new JJPromise((resolve, reject) => {
   setTimeout(() => {
-    resolve(111)
+    reject(111)
   }, 1000)
 })
 const p2 = new JJPromise((resolve, reject) => {
@@ -172,18 +203,30 @@ const p2 = new JJPromise((resolve, reject) => {
     reject(222)
   }, 2000)
 })
-const p3 = new JJPromise(resolve => {
+const p3 = new JJPromise((resolve, reject) => {
   setTimeout(() => {
-    resolve(333)
+    reject(333)
   }, 3000)
 })
 
-JJPromise.all([p1, p2, p3]).then(res => {
+// JJPromise.all([p1, p2, p3]).then(res => {
+//   console.log('res:', res);
+// }).catch(err => {
+//   console.log('err:', err);
+// })
+
+// JJPromise.allSettled([p1, p2, p3]).then(res => {
+//   console.log('res:', res);
+// })
+
+JJPromise.race([p1, p2, p3]).then(res => {
   console.log('res:', res);
 }).catch(err => {
   console.log('err:', err);
 })
 
-JJPromise.allSettled([p1, p2, p3]).then(res => {
+JJPromise.any([p1, p2, p3]).then(res => {
   console.log('res:', res);
+}).catch(err => {
+  console.log('err:', err.errors);
 })
