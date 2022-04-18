@@ -101,65 +101,20 @@ class JJPromise {
       onfinally()
     })
   }
+
+  static resolve(value) {
+    return new JJPromise(resolve => resolve(value))
+  }
+
+  static reject(reason) {
+    return new JJPromise((resolve, reject) => reject(reason))
+  }
 }
 
-const promise = new JJPromise((resolve, reject) => {
-  setTimeout(() => {
-    reject(222)
-    resolve(111)
-  }, 2000);
-  // throw new Error('executor error message')
+JJPromise.resolve("哈哈哈").then(res => {
+  console.log('res:', res);
 })
 
-// console.log('---------- 开始调用 then 方法  ----------');
-
-promise.then(res => {
-  console.log('then1 res1:', res);
-  return 1111
-}).then(res => {
-  console.log('then1 res2:', res);
-}).catch(err => {
-  console.log('then1 err:', err);
-}).finally(() => {
-  console.log('then1 finally');
+JJPromise.reject("error message").catch(err => {
+  console.log('err:', err);
 })
-
-// 1. 同一个 Promise 对象可以多次调用 then() 方法
-promise.then(res => {
-  console.log('res1:', res);
-}, err => {
-  console.log('err1:', err);
-})
-
-promise.then(res => {
-  console.log('res2:', res);
-}, err => {
-  console.log('err2:', err);
-})
-
-// 2. 在 Promise 的状态确定之后可以再次调用 then() 方法
-setTimeout(() => {
-  console.log('setTimeout 中的 promise.then() 执行了~');
-  promise.then(res => {
-    console.log('setTimeout res:', res);
-  }, err => {
-    console.log('setTimeout err:', err);
-  })
-}, 3000);
-
-// 3. Promise 的 then() 可以链式调用
-promise
-  .then(res => {
-    console.log('---------- 链式调用 ~ res1:', res);
-    // return 'aaa'
-    throw new Error('error message')
-  }, err => {
-    console.log('---------- 链式调用 ~ err1:', err);
-    // return 'bbb'
-    throw new Error('error message')
-  })
-  .then(res => {
-    console.log('---------- 链式调用 ~ res2:', res);
-  }, err => {
-    console.log('---------- 链式调用 ~ err2:', err);
-  })
