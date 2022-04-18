@@ -95,11 +95,7 @@ class JJPromise {
   }
 
   finally(onfinally) {
-    this.then(() => {
-      onfinally()
-    }, () => {
-      onfinally()
-    })
+    this.then(onfinally, onfinally)
   }
 
   static resolve(value) {
@@ -120,9 +116,7 @@ class JJPromise {
           if (values.length === promises.length) {
             resolve(values)
           }
-        }, err => {
-          reject(err)
-        })
+        }, reject)
       })
     })
   }
@@ -156,11 +150,7 @@ class JJPromise {
   static race(promises) {
     return new JJPromise((resolve, reject) => {
       promises.forEach(promise => {
-        promise.then(res => {
-          resolve(res)
-        }, err => {
-          reject(err)
-        })
+        promise.then(resolve, reject)
       })
     })
   }
@@ -171,9 +161,7 @@ class JJPromise {
       // 一旦拿到一个成功的结果就调用 resolve()
       // 只有所有结果都失败时才调用 reject()
       promises.forEach(promise => {
-        promise.then(res => {
-          resolve(res)
-        }, err => {
+        promise.then(resolve, err => {
           reasons.push(err)
           if (reasons.length === promises.length) {
             // AggregateError 是 ES12 新增的一种错误类型，用来一次表示多个错误
