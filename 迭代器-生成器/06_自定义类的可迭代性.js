@@ -35,6 +35,11 @@ class Classroom {
         } else {
           return { done: true, value: undefined }
         }
+      },
+      // 可选的 return() 方法用于指定在迭代器提前关闭时执行的逻辑（意味着这里可以监听到迭代器被提前关闭）
+      return() {
+        console.log('迭代器提前终止了~');
+        return { done: true, value: undefined }
       }
     }
   }
@@ -58,5 +63,8 @@ classroom1.enter('zhj')
 // }
 
 for (const student of classroom1) {
+  if (student === '王小波') {
+    break
+  }
   console.log(student);
 }
