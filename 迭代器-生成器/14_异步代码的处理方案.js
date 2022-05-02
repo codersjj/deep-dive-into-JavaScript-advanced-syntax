@@ -132,22 +132,26 @@ function* getData() {
 // })
 
 // 实现一个（自动化的）函数，自动执行生成器
-function execGenerator(generatorFn) {
-  const generator = generatorFn()
+// function execGenerator(generatorFn) {
+//   const generator = generatorFn()
 
-  // 递归函数
-  function exec(res) {
-    const result = generator.next(res)
-    if (result.done) {
-      return result.value
-    }
-    result.value.then(res => {
-      exec(res)
-    })
-  }
+//   // 递归函数
+//   function exec(res) {
+//     const result = generator.next(res)
+//     if (result.done) {
+//       return result.value
+//     }
+//     result.value.then(res => {
+//       exec(res)
+//     })
+//   }
 
-  exec()
-}
+//   exec()
+// }
 
-execGenerator(getData)
+// execGenerator(getData)
 // execGenerator(getDepartment)
+
+// 使用第三方包 co 来自动执行生成器
+const co = require('co')
+co(getData)
