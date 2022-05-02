@@ -59,15 +59,37 @@ function requestData(url) {
   第一种方案：多次回调
   缺点：会出现回调地狱（回调函数里面又嵌套了回调函数）
 */
-requestData('zhj').then(res => {
-  console.log(res)
-  requestData(res + 'aaa').then(res => {
+// requestData('zhj').then(res => {
+//   console.log(res)
+//   requestData(res + 'aaa').then(res => {
+//     console.log(res)
+//     requestData(res + 'bbb').then(res => {
+//       console.log(res)
+//       requestData(res + 'ccc').then(res => {
+//         console.log(res)
+//       })
+//     })
+//   })
+// })
+
+/*
+  第二种方案：借助 Promise 中 then() 的返回值是一个新的 Promise 来解决
+  解决了回调地狱的问题
+  缺点：代码阅读性差
+*/
+requestData('zhj')
+  .then(res => {
     console.log(res)
-    requestData(res + 'bbb').then(res => {
-      console.log(res)
-      requestData(res + 'ccc').then(res => {
-        console.log(res)
-      })
-    })
+    return requestData(res + 'aaa') // 直接把 Promise 返回出去
   })
-})
+  .then(res => {
+    console.log(res)
+    return requestData(res + 'bbb')
+  })
+  .then(res => {
+    console.log(res)
+    return requestData(res + 'ccc')
+  })
+  .then(res => {
+    console.log(res)
+  })
