@@ -95,21 +95,21 @@ function requestData(url) {
 //   })
 
 /* 第三种方案：Promise + Generator 实现 */
-function* getData() {
-  const res1 = yield requestData('zhj')
-  console.log("function*getData ~ res1", res1)
+// function* getData() {
+//   const res1 = yield requestData('zhj')
+//   console.log("function*getData ~ res1", res1)
 
-  const res2 = yield requestData(res1 + 'aaa')
-  console.log("function*getData ~ res2", res2)
+//   const res2 = yield requestData(res1 + 'aaa')
+//   console.log("function*getData ~ res2", res2)
 
-  const res3 = yield requestData(res2 + 'bbb')
-  console.log("function*getData ~ res3", res3)
+//   const res3 = yield requestData(res2 + 'bbb')
+//   console.log("function*getData ~ res3", res3)
 
-  const res4 = yield requestData(res3 + 'ccc')
-  console.log("function*getData ~ res4", res4)
+//   const res4 = yield requestData(res3 + 'ccc')
+//   console.log("function*getData ~ res4", res4)
 
-  // return undefined
-}
+//   // return undefined
+// }
 
 // function* getDepartment() {
 //   const user = yield requestData('id')
@@ -153,5 +153,22 @@ function* getData() {
 // execGenerator(getDepartment)
 
 // 使用第三方包 co 来自动执行生成器
-const co = require('co')
-co(getData)
+// const co = require('co')
+// co(getData)
+
+// 使用 ES8 新增的 async/await 实现（本质上其实是上面 Generator + Promise 实现方式的语法糖）
+async function getData() {
+  const res1 = await requestData('zhj')
+  console.log("getData ~ res1", res1)
+
+  const res2 = await requestData(res1 + 'aaa')
+  console.log("getData ~ res2", res2)
+
+  const res3 = await requestData(res2 + 'bbb')
+  console.log("getData ~ res3", res3)
+
+  const res4 = await requestData(res3 + 'ccc')
+  console.log("getData ~ res4", res4)
+}
+
+getData()
