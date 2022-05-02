@@ -107,19 +107,47 @@ function* getData() {
 
   const res4 = yield requestData(res3 + 'ccc')
   console.log("function*getData ~ res4", res4)
+
+  // return undefined
 }
 
+// function* getDepartment() {
+//   const user = yield requestData('id')
+//   const department = yield requestData(user.departmentId)
+// }
+
 // 手动执行生成器
-const generator = getData()
-generator.next().value.then(res => {
-  console.log(res)
-  generator.next(res).value.then(res => {
-    console.log(res)
-    generator.next(res).value.then(res => {
-      console.log(res)
-      generator.next(res).value.then(res => {
-        console.log(res)
-      })
+// const generator = getData()
+// generator.next().value.then(res => {
+//   console.log(res)
+//   generator.next(res).value.then(res => {
+//     console.log(res)
+//     generator.next(res).value.then(res => {
+//       console.log(res)
+//       generator.next(res).value.then(res => {
+//         console.log(res)
+//       })
+//     })
+//   })
+// })
+
+// 实现一个（自动化的）函数，自动执行生成器
+function execGenerator(generatorFn) {
+  const generator = generatorFn()
+
+  // 递归函数
+  function exec(res) {
+    const result = generator.next(res)
+    if (result.done) {
+      return result.value
+    }
+    result.value.then(res => {
+      exec(res)
     })
-  })
-})
+  }
+
+  exec()
+}
+
+execGenerator(getData)
+// execGenerator(getDepartment)
