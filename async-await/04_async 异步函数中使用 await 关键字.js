@@ -15,33 +15,43 @@
 //   console.log('res2:', res2);
 // }
 
-// function requestData() {
-//   return new Promise((resolve, reject) => {
-//     setTimeout(() => {
-//       resolve(123)
-//     }, 2000)
+function requestData() {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      reject('err msg')
+    }, 2000)
+  })
+}
+
+// foo()
+
+// async function foo() {
+//   // await 后面跟普通的值时，会立即直接返回这个值
+//   // const res = await 666
+
+//   // await 后面也可以跟实现了 thenable 接口的对象
+//   // const res = await {
+//   //   then: function(resolve, reject) {
+//   //     resolve(666)
+//   //   }
+//   // }
+
+//   // await 后面还可以跟一个 Promise
+//   const res = await new Promise((resolve, reject) => {
+//     resolve(666)
 //   })
+
+//   console.log('res:', res);
 // }
 
 // foo()
 
+// await 后面的表达式返回的 Promise 的状态是 rejected 时，会将这个 reject 的结果直接作为这个 async 异步函数返回的 Promise 的 reject 值
 async function foo() {
-  // await 后面跟普通的值时，会立即直接返回这个值
-  // const res = await 666
-
-  // await 后面也可以跟实现了 thenable 接口的对象
-  // const res = await {
-  //   then: function(resolve, reject) {
-  //     resolve(666)
-  //   }
-  // }
-
-  // await 后面还可以跟一个 Promise
-  const res = await new Promise((resolve, reject) => {
-    resolve(666)
-  })
-
-  console.log('res:', res);
+  const res = await requestData()
+  console.log('后面的代码', res);
 }
 
-foo()
+foo().catch(err => {
+  console.log('foo ~ err:', err);
+})
