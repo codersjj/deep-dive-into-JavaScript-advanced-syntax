@@ -77,19 +77,49 @@ function requestData(url) {
   解决了回调地狱的问题
   缺点：代码阅读性差
 */
-requestData('zhj')
-  .then(res => {
+// requestData('zhj')
+//   .then(res => {
+//     console.log(res)
+//     return requestData(res + 'aaa') // 直接把 Promise 返回出去
+//   })
+//   .then(res => {
+//     console.log(res)
+//     return requestData(res + 'bbb')
+//   })
+//   .then(res => {
+//     console.log(res)
+//     return requestData(res + 'ccc')
+//   })
+//   .then(res => {
+//     console.log(res)
+//   })
+
+/* 第三种方案：Promise + Generator 实现 */
+function* getData() {
+  const res1 = yield requestData('zhj')
+  console.log("function*getData ~ res1", res1)
+
+  const res2 = yield requestData(res1 + 'aaa')
+  console.log("function*getData ~ res2", res2)
+
+  const res3 = yield requestData(res2 + 'bbb')
+  console.log("function*getData ~ res3", res3)
+
+  const res4 = yield requestData(res3 + 'ccc')
+  console.log("function*getData ~ res4", res4)
+}
+
+// 手动执行生成器
+const generator = getData()
+generator.next().value.then(res => {
+  console.log(res)
+  generator.next(res).value.then(res => {
     console.log(res)
-    return requestData(res + 'aaa') // 直接把 Promise 返回出去
+    generator.next(res).value.then(res => {
+      console.log(res)
+      generator.next(res).value.then(res => {
+        console.log(res)
+      })
+    })
   })
-  .then(res => {
-    console.log(res)
-    return requestData(res + 'bbb')
-  })
-  .then(res => {
-    console.log(res)
-    return requestData(res + 'ccc')
-  })
-  .then(res => {
-    console.log(res)
-  })
+})
