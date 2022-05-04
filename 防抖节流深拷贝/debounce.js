@@ -1,4 +1,4 @@
-function debounce(fn, delay, immediate = false) {
+function debounce(fn, delay, immediate = false, resultCallback) {
   let timer = null
   // 是否被调用过，用来实现在中途停掉后再次触发事件时，响应函数还能立即执行
   let isInvoke = false
@@ -8,11 +8,17 @@ function debounce(fn, delay, immediate = false) {
 
     // 判断是否要立即执行
     if (immediate && !isInvoke) {
-      fn.apply(this, args)
+      const result = fn.apply(this, args)
+      if (resultCallback && typeof resultCallback === 'function') {
+        resultCallback(result)
+      }
       isInvoke = true
     } else {
       timer = setTimeout(() => {
-        fn.apply(this, args)
+        const result = fn.apply(this, args)
+        if (resultCallback && typeof resultCallback === 'function') {
+          resultCallback(result)
+        }
         isInvoke = false
         // 建议重置为初始状态
         timer = null

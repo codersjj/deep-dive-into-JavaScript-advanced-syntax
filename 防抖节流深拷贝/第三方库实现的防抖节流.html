@@ -21,13 +21,18 @@
     const handleInputChange = function(event) {
       // this 绑定的是触发当前事件的元素对象，这里也就是 inputEl
       console.log(`发送第 ${++count} 次网络请求`, this, event);
+
+      // 返回值
+      return 666
     }
 
     // inputEl.oninput = handleInputChange
 
     // 防抖处理
     // inputEl.oninput = _.debounce(handleInputChange, 2000)
-    const debounceInputChange = debounce(handleInputChange, 2000, true)
+    const debounceInputChange = debounce(handleInputChange, 2000, false, (res) => {
+      console.log('拿到真正执行的函数的返回值：', res);
+    })
     inputEl.oninput = debounceInputChange
 
     // 节流处理
