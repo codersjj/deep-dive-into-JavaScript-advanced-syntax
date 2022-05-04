@@ -9,7 +9,8 @@
 <body>
   <input type="text">
 
-  <script src="https://cdn.jsdelivr.net/npm/underscore@1.13.3/underscore-umd-min.js"></script>
+  <!-- <script src="https://cdn.jsdelivr.net/npm/underscore@1.13.3/underscore-umd-min.js"></script> -->
+  <script src="debounce.js"></script>
   <script>
     const inputEl = document.querySelector('input')
     inputEl.focus()
@@ -24,9 +25,10 @@
 
     // 防抖处理
     // inputEl.oninput = _.debounce(handleInputChange, 2000)
+    inputEl.oninput = debounce(handleInputChange, 2000)
 
     // 节流处理
-    inputEl.oninput = _.throttle(handleInputChange, 2000)
+    // inputEl.oninput = _.throttle(handleInputChange, 2000)
 
   </script>
 </body>
