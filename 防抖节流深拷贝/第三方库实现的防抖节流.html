@@ -17,8 +17,9 @@
 
     let count = 0
 
-    const handleInputChange = function() {
-      console.log(`发送第 ${++count} 次网络请求`);
+    const handleInputChange = function(event) {
+      // this 绑定的是触发当前事件的元素对象，这里也就是 inputEl
+      console.log(`发送第 ${++count} 次网络请求`, this, event);
     }
 
     // inputEl.oninput = handleInputChange
