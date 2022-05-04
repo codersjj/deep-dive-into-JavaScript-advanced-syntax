@@ -31,9 +31,15 @@
     // 防抖处理
     // inputEl.oninput = _.debounce(handleInputChange, 2000)
     const debounceInputChange = debounce(handleInputChange, 2000, false, (res) => {
-      console.log('拿到真正执行的函数的返回值：', res);
+      console.log('通过回调拿到真正执行的函数的返回值：', res);
     })
-    inputEl.oninput = debounceInputChange
+    const tempCallback = () => {
+      // 执行 debounceInputChange() 相当于执行了 debounce.js 中的 _debounce()，然后就能 .then() 拿到结果了
+      debounceInputChange().then(res => {
+        console.log('通过 Promise 的结果，拿到真正执行的函数的返回值：', res);
+      })
+    }
+    inputEl.oninput = tempCallback
 
     // 节流处理
     // inputEl.oninput = _.throttle(handleInputChange, 2000)

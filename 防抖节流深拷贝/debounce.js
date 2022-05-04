@@ -4,26 +4,30 @@ function debounce(fn, delay, immediate = false, resultCallback) {
   let isInvoke = false
 
   const _debounce = function(...args) {
-    if (timer) clearTimeout(timer)
+    return new Promise((resolve, reject) => {
+      if (timer) clearTimeout(timer)
 
-    // 判断是否要立即执行
-    if (immediate && !isInvoke) {
-      const result = fn.apply(this, args)
-      if (resultCallback && typeof resultCallback === 'function') {
-        resultCallback(result)
-      }
-      isInvoke = true
-    } else {
-      timer = setTimeout(() => {
+      // 判断是否要立即执行
+      if (immediate && !isInvoke) {
         const result = fn.apply(this, args)
         if (resultCallback && typeof resultCallback === 'function') {
           resultCallback(result)
         }
-        isInvoke = false
-        // 建议重置为初始状态
-        timer = null
-      }, delay)
-    }
+        resolve(result)
+        isInvoke = true
+      } else {
+        timer = setTimeout(() => {
+          const result = fn.apply(this, args)
+          if (resultCallback && typeof resultCallback === 'function') {
+            resultCallback(result)
+          }
+          resolve(result)
+          isInvoke = false
+          // 建议重置为初始状态
+          timer = null
+        }, delay)
+      }
+    })
   }
 
   // 添加取消功能
