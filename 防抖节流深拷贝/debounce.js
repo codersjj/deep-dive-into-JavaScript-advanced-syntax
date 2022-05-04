@@ -14,8 +14,18 @@ function debounce(fn, delay, immediate = false) {
       timer = setTimeout(() => {
         fn.apply(this, args)
         isInvoke = false
+        // 建议重置为初始状态
+        timer = null
       }, delay)
     }
+  }
+
+  // 添加取消功能
+  _debounce.cancel = function() {
+    if (timer) clearTimeout(timer)
+    // 建议重置为初始状态
+    timer = null
+    isInvoke = false
   }
 
   return _debounce

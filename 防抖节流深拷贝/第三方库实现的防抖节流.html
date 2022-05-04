@@ -8,6 +8,7 @@
 </head>
 <body>
   <input type="text">
+  <button id="cancel">取消</button>
 
   <!-- <script src="https://cdn.jsdelivr.net/npm/underscore@1.13.3/underscore-umd-min.js"></script> -->
   <script src="debounce.js"></script>
@@ -26,11 +27,17 @@
 
     // 防抖处理
     // inputEl.oninput = _.debounce(handleInputChange, 2000)
-    inputEl.oninput = debounce(handleInputChange, 2000, true)
+    const debounceInputChange = debounce(handleInputChange, 2000, true)
+    inputEl.oninput = debounceInputChange
 
     // 节流处理
     // inputEl.oninput = _.throttle(handleInputChange, 2000)
 
+    // 取消操作
+    const cancelBtn = document.querySelector('#cancel')
+    cancelBtn.onclick = function() {
+      debounceInputChange.cancel()
+    }
   </script>
 </body>
 </html>
