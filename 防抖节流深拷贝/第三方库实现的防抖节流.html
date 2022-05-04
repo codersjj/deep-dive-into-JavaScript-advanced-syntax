@@ -26,7 +26,7 @@
 
     // 防抖处理
     // inputEl.oninput = _.debounce(handleInputChange, 2000)
-    inputEl.oninput = debounce(handleInputChange, 2000)
+    inputEl.oninput = debounce(handleInputChange, 2000, true)
 
     // 节流处理
     // inputEl.oninput = _.throttle(handleInputChange, 2000)
