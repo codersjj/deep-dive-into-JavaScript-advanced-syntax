@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <input type="text">
+  <button id="cancel">取消</button>
+
+  <script src="https://cdn.jsdelivr.net/npm/underscore@1.13.3/underscore-umd-min.js"></script>
+  <script src="debounce.js"></script>
+  <script>
+    const inputEl = document.querySelector('input')
+    inputEl.focus()
+
+    let count = 0
+
+    const handleInputChange = function(event) {
+      // this 绑定的是触发当前事件的元素对象，这里也就是 inputEl
+      console.log(`发送第 ${++count} 次网络请求`, this, event);
+
+      // 返回值
+      return 666
+    }
+
+    // inputEl.oninput = handleInputChange
+
+    // 防抖处理
+    // inputEl.oninput = _.debounce(handleInputChange, 2000)
+    const debounceInputChange = debounce(handleInputChange, 2000, false, (res) => {
+      console.log('通过回调拿到真正执行的函数的返回值：', res);
+    })
+    const tempCallback = () => {
+      // 执行 debounceInputChange() 相当于执行了 debounce.js 中的 _debounce()，然后就能 .then() 拿到结果了
+      debounceInputChange().then(res => {
+        console.log('通过 Promise 的结果，拿到真正执行的函数的返回值：', res);
+      })
+    }
+    inputEl.oninput = tempCallback
+
+    // 取消操作
+    const cancelBtn = document.querySelector('#cancel')
+    cancelBtn.onclick = function() {
+      debounceInputChange.cancel()
+    }
+  </script>
+</body>
+</html>
