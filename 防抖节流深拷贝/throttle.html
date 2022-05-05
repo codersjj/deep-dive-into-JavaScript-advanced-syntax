@@ -35,8 +35,8 @@
         console.log('resultCallback 的结果:', res);
       }
     })
-    const tempCallback = () => {
-      handleInputChangeThrottled().then(res => {
+    const tempCallback = (...args) => {
+      handleInputChangeThrottled.apply(inputEl, args).then(res => {
         console.log('Promise 的结果：', res);
       })
     }
