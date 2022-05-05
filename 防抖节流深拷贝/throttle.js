@@ -1,5 +1,5 @@
 function throttle(fn, interval, options = { leading: true, trailing: false }) {
-  const { leading, trailing } = options
+  const { leading, trailing, resultCallback } = options
 
   // 记录上一次的开始时间（最近一次响应函数执行的时间点）
   let lastTime = 0
@@ -20,7 +20,10 @@ function throttle(fn, interval, options = { leading: true, trailing: false }) {
         timer = null
       }
       // 剩余时间小于等于 0 时真正触发响应函数
-      fn.apply(this, args)
+      const result = fn.apply(this, args)
+      if (resultCallback) {
+        resultCallback(result)
+      }
       // 更新最近一次响应函数执行的时间点，以便开始下一个计时周期
       lastTime = currentTime
 
@@ -29,7 +32,10 @@ function throttle(fn, interval, options = { leading: true, trailing: false }) {
 
     if (trailing && !timer) {
       timer = setTimeout(() => {
-        fn.apply(this, args)
+        const result = fn.apply(this, args)
+        if (resultCallback) {
+          resultCallback(result)
+        }
         timer = null
         lastTime = !leading ? 0 : new Date().getTime()
       }, remainTime)

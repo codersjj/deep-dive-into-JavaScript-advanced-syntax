@@ -20,6 +20,7 @@
 
     const handleInputChange = function(event) {
       console.log(`发送第 ${++count} 次网络请求`, this, event);
+      return 666
     }
 
     // inputEl.oninput = handleInputChange
@@ -27,7 +28,13 @@
     // 节流处理
     // inputEl.oninput = _.throttle(handleInputChange, 2000)
     // leading: 设置是否一开始就触发响应函数
-    const handleInputChangeThrottled = throttle(handleInputChange, 2000, { leading: false, trailing: true })
+    const handleInputChangeThrottled = throttle(handleInputChange, 2000, {
+      leading: false,
+      trailing: true,
+      resultCallback: (res) => {
+        console.log('res:', res);
+      }
+    })
     inputEl.oninput = handleInputChangeThrottled
 
     // 取消操作
