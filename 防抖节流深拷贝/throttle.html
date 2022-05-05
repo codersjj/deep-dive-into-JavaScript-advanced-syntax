@@ -26,7 +26,7 @@
     // 节流处理
     // inputEl.oninput = _.throttle(handleInputChange, 2000)
     // leading: 设置是否一开始就触发响应函数
-    inputEl.oninput = throttle(handleInputChange, 2000, { leading: false })
+    inputEl.oninput = throttle(handleInputChange, 2000, { leading: false, trailing: true })
   </script>
 </body>
 </html>
