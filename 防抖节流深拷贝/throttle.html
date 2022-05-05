@@ -8,6 +8,7 @@
 </head>
 <body>
   <input type="text">
+  <button id="cancel">取消</button>
 
   <script src="https://cdn.jsdelivr.net/npm/underscore@1.13.3/underscore-umd-min.js"></script>
   <script src="throttle.js"></script>
@@ -26,7 +27,14 @@
     // 节流处理
     // inputEl.oninput = _.throttle(handleInputChange, 2000)
     // leading: 设置是否一开始就触发响应函数
-    inputEl.oninput = throttle(handleInputChange, 2000, { leading: false, trailing: true })
+    const handleInputChangeThrottled = throttle(handleInputChange, 2000, { leading: false, trailing: true })
+    inputEl.oninput = handleInputChangeThrottled
+
+    // 取消操作
+    const cancelBtn = document.querySelector('#cancel')
+    cancelBtn.onclick = () => {
+      handleInputChangeThrottled.cancel()
+    }
   </script>
 </body>
 </html>

@@ -36,5 +36,12 @@ function throttle(fn, interval, options = { leading: true, trailing: false }) {
     }
   }
 
+  _throttle.cancel = function() {
+    if (timer) clearTimeout(timer)
+    // 将数据重置为原始状态
+    timer = null
+    lastTime = 0
+  }
+
   return _throttle
 }
