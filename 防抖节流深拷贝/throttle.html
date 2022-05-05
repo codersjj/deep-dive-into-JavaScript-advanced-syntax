@@ -32,10 +32,15 @@
       leading: false,
       trailing: true,
       resultCallback: (res) => {
-        console.log('res:', res);
+        console.log('resultCallback 的结果:', res);
       }
     })
-    inputEl.oninput = handleInputChangeThrottled
+    const tempCallback = () => {
+      handleInputChangeThrottled().then(res => {
+        console.log('Promise 的结果：', res);
+      })
+    }
+    inputEl.oninput = tempCallback
 
     // 取消操作
     const cancelBtn = document.querySelector('#cancel')
