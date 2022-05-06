@@ -9,7 +9,8 @@ function deepClone(value) {
     return value
   }
 
-  const newObj = {}
+  // 判断传入的对象是否为数组
+  const newObj = Array.isArray(value) ? [] : {}
 
   for (const key in value) {
     newObj[key] = deepClone(value[key])
@@ -27,7 +28,8 @@ const obj = {
     address: {
       city: '北京'
     }
-  }
+  },
+  hobbies: ['running', 'swimming', 'football']
 }
 
 const newObj = deepClone(obj)
@@ -36,8 +38,3 @@ obj.name = 'wy'
 obj.friend.name = '王毅'
 obj.friend.address.city = '上海'
 console.log(newObj)
-// {
-//   name: 'zhj',
-//   age: 20,
-//   friend: { name: 'wy', address: { city: '北京' } }
-// }
