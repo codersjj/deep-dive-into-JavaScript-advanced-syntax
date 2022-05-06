@@ -3,8 +3,7 @@ function isObject(value) {
   return value !== null && (valueType === 'object' || valueType === 'function')
 }
 
-const map = new Map()
-function deepClone(value) {
+function deepClone(value, map = new Map()) {
   // 判断传入的 value 如果是 Symbol 类型，那么根据其 description 创建一个新的 Symbol
   if (typeof value === 'symbol') {
     return Symbol(value.description)
@@ -55,7 +54,7 @@ function deepClone(value) {
 
   // for...in 迭代的是对象的可枚举字符串属性（不包括 Symbol 类型的属性）
   for (const key in value) {
-    newObj[key] = deepClone(value[key])
+    newObj[key] = deepClone(value[key], map)
   }
 
   // 对 Symbol 类型的 key 做特殊处理
@@ -65,7 +64,7 @@ function deepClone(value) {
     // 可以创建一个新的 Symbol 作为 key，但没有必要，因为用 Symbol 作为 key 的目的是在同一个对象中避免相同 key 的情况出现，而我们这里是不同的对象，在不同的对象中使用相同的 key 一般是没有问题的。
     // const newSymbolKey = Symbol(symbolKey.description)
     // newObj[newSymbolKey] = deepClone(value[symbolKey])
-    newObj[symbolKey] = deepClone(value[symbolKey])
+    newObj[symbolKey] = deepClone(value[symbolKey], map)
   }
 
   return newObj
