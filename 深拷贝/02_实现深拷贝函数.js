@@ -3,6 +3,7 @@ function isObject(value) {
   return value !== null && (valueType === 'object' || valueType === 'function')
 }
 
+const map = new Map()
 function deepClone(value) {
   // 判断传入的 value 如果是 Symbol 类型，那么根据其 description 创建一个新的 Symbol
   if (typeof value === 'symbol') {
@@ -43,8 +44,14 @@ function deepClone(value) {
     // return newSet
   }
 
+  if (map.has(value)) {
+    return map.get(value)
+  }
+
   // 判断传入的对象是否为数组
   const newObj = Array.isArray(value) ? [] : {}
+
+  map.set(value, newObj)
 
   // for...in 迭代的是对象的可枚举字符串属性（不包括 Symbol 类型的属性）
   for (const key in value) {
@@ -91,6 +98,8 @@ const obj = {
   // Set
   set: new Set([1, 2, 3])
 }
+// 循环引用
+obj.info = obj
 
 const newObj = deepClone(obj)
 console.log(obj === newObj)
@@ -99,3 +108,4 @@ obj.friend.name = '王毅'
 obj.friend.address.city = '上海'
 console.log(newObj)
 console.log(newObj.s2 === obj.s2)
+console.log('循环引用', newObj.info.info.info)
