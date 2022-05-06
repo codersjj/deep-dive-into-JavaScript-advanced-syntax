@@ -9,6 +9,11 @@ function deepClone(value) {
     return value
   }
 
+  // 判断传入的对象如果是函数类型，那么直接使用同一个函数
+  if (typeof value === 'function') {
+    return value
+  }
+
   // 判断传入的对象是否为数组
   const newObj = Array.isArray(value) ? [] : {}
 
@@ -29,7 +34,12 @@ const obj = {
       city: '北京'
     }
   },
-  hobbies: ['running', 'swimming', 'football']
+  // 数组类型
+  hobbies: ['running', 'swimming', 'football'],
+  // 函数类型
+  foo: function() {
+    console.log('foo function');
+  }
 }
 
 const newObj = deepClone(obj)
