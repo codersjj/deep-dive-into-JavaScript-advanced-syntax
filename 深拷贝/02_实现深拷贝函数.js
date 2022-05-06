@@ -3,7 +3,7 @@ function isObject(value) {
   return value !== null && (valueType === 'object' || valueType === 'function')
 }
 
-function deepClone(value, map = new Map()) {
+function deepClone(value, map = new WeakMap()) {
   // 判断传入的 value 如果是 Symbol 类型，那么根据其 description 创建一个新的 Symbol
   if (typeof value === 'symbol') {
     return Symbol(value.description)
