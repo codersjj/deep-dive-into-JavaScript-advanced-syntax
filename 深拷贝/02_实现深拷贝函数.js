@@ -19,6 +19,30 @@ function deepClone(value) {
     return value
   }
 
+  // 判断传入的对象是否为 Map 类型
+  if (value instanceof Map) {
+    // 开发中浅拷贝一般够用了
+    return new Map([...value])
+    // 深拷贝
+    // const newMap = new Map()
+    // value.forEach((val, key) => {
+    //   newMap.set(key, deepClone(val))
+    // })
+    // return newMap
+  }
+
+  // 判断传入的对象是否为 Set 类型
+  if (value instanceof Set) {
+    // 开发中浅拷贝一般够用了
+    return new Set([...value])
+    // 深拷贝
+    // const newSet = new Set()
+    // value.forEach((val) => {
+    //   newSet.add(deepClone(val))
+    // })
+    // return newSet
+  }
+
   // 判断传入的对象是否为数组
   const newObj = Array.isArray(value) ? [] : {}
 
@@ -61,7 +85,11 @@ const obj = {
   },
   // Symbol 类型作为 key 或 value
   [s1]: 'symbol aaa',
-  s2: s2
+  s2: s2,
+  // Map
+  map: new Map([['one', 1], ['two', 2], ['three', 3]]),
+  // Set
+  set: new Set([1, 2, 3])
 }
 
 const newObj = deepClone(obj)
