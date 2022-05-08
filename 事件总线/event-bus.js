@@ -22,13 +22,10 @@ class JJEventBus {
   off(eventName, eventCallback) {
     const handlers = this.eventBus[eventName]
     if (!handlers) return
-    const newHandlers = [...handlers]
-    for (let i = 0; i < newHandlers.length; i++) {
-      const handler = newHandlers[i]
+    for (let i = handlers.length - 1; i >= 0; i--) {
+      const handler = handlers[i]
       if (handler.eventCallback === eventCallback) {
-        // 从原来的数组中拿对应 handler 的 index
-        const index = handlers.indexOf(handler)
-        handlers.splice(index, 1)
+        handlers.splice(i, 1)
       }
     }
   }
