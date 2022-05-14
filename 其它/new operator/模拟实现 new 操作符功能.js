@@ -2,6 +2,11 @@
 
 function useNewOperator() {
   var constructor = arguments[0]
+
+  if (typeof constructor !== 'function') {
+    throw new TypeError('the first argument to useNewOperator function must be a function')
+  }
+
   var args = [].slice.call(arguments, 1)
 
   // 1. 在内存中创建一个新对象
@@ -40,10 +45,20 @@ Person.prototype.sayName = function() {
   console.log(this.name);
 }
 
-const p1 = new Person('zhj', 20)
-console.log(p1);
-p1.sayName()
+// const p1 = new Person('zhj', 20)
+// console.log(p1);
+// p1.sayName()
 
-const p2 = useNewOperator(Person, 'zhj', 20)
+// const p2 = useNewOperator(Person, 'zhj', 20)
+// console.log(p2);
+// p2.sayName()
+
+const obj = {}
+
+// const p1 = new obj('zhj', 20)
+// console.log(p1);
+// p1.sayName()
+
+const p2 = useNewOperator(obj, 'zhj', 20)
 console.log(p2);
 p2.sayName()
