@@ -5,6 +5,9 @@ function useNewOperator(constructor, ...args) {
     throw new TypeError('the first argument to useNewOperator function must be a function')
   }
 
+  // 在通过使用 new 操作符被调用的构造方法或函数中，new.target 返回一个指向构造方法或函数的引用。（参考链接：https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/new.target）
+  useNewOperator.target = constructor
+
   // 1. 在内存中创建一个新对象
   const obj = {}
 
@@ -27,6 +30,9 @@ function useNewOperator(constructor, ...args) {
 
 // 测试
 function Person(name, age) {
+  console.log('this:', this);
+  console.log('new.target:', new.target);
+  console.log('useNewOperator.target:', useNewOperator.target);
   this.name = name
   this.age = age
 
@@ -45,6 +51,7 @@ Person.prototype.sayName = function() {
 }
 
 const p1 = new Person('zhj', 20)
+// const p1 = Person('zhj', 20)
 console.log(p1);
 p1.sayName()
 
