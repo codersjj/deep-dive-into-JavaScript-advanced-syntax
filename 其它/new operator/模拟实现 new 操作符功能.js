@@ -13,7 +13,10 @@ function useNewOperator() {
   var obj = {}
 
   // 2. 这个新对象内部的 [[Prototype]] 指针被赋值为构造函数（constructor）的 prototype 属性
-  obj.__proto__ = constructor.prototype
+  // 不推荐使用 Object.prototype.__proto__，更推荐使用 Object.getPrototypeOf/Reflect.getPrototypeOf 和Object.setPrototypeOf/Reflect.setPrototypeOf（参考链接：https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/proto）
+  Object.setPrototypeOf(obj, constructor.prototype)
+  // 或者使用 Object.create() 直接指定原型创建新对象
+  // var obj = Object.create(constructor.prototype)
 
   // 3. 构造函数内部的 this 被赋值为这个新对象（即 this 指向新对象）
   // 4. 执行构造函数内部的代码（给新对象添加属性）
@@ -45,20 +48,10 @@ Person.prototype.sayName = function() {
   console.log(this.name);
 }
 
-// const p1 = new Person('zhj', 20)
-// console.log(p1);
-// p1.sayName()
+const p1 = new Person('zhj', 20)
+console.log(p1);
+p1.sayName()
 
-// const p2 = useNewOperator(Person, 'zhj', 20)
-// console.log(p2);
-// p2.sayName()
-
-const obj = {}
-
-// const p1 = new obj('zhj', 20)
-// console.log(p1);
-// p1.sayName()
-
-const p2 = useNewOperator(obj, 'zhj', 20)
+const p2 = useNewOperator(Person, 'zhj', 20)
 console.log(p2);
 p2.sayName()
