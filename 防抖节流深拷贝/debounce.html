@@ -19,7 +19,7 @@
     let count = 0
 
     const handleInputChange = function(event) {
-      // this 绑定的是触发当前事件的元素对象，这里也就是 inputEl
+      // this 绑定的是绑定当前事件的元素对象，这里也就是 inputEl https://developer.mozilla.org/en-US/docs/Web/API/Event/currentTarget#:~:text=//%20When%20this%20function%20is%20used%20as%20an%20event%20handler%3A%20this%20%3D%3D%3D%20e.currentTarget
       console.log(`发送第 ${++count} 次网络请求`, this, event);
 
       // 返回值
