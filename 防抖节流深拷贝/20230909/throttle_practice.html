@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+
+  <input type="text">
+  <button>取消</button>
+
+  <!-- <script src="https://cdn.jsdelivr.net/npm/underscore@1.13.6/underscore-umd-min.js"></script> -->
+  <!-- <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script> -->
+  <script src="./practice.js"></script>
+
+  <script>
+    let count = 0
+    function handleInput(event) {
+      console.log('input', this, event)
+console.log(abc)
+      return ++count
+    }
+    const inputEl = document.querySelector('input')
+    inputEl.focus()
+    // inputEl.oninput = _.throttle(handleInput, 2000, true)
+    // inputEl.oninput = _.throttle(handleInput, 2000, { leading: false, trailing: false })
+    // inputEl.oninput = throttle(handleInput, 2000, { leading: true, trailing: true })
+    const throttled = throttle(handleInput, 2000, {
+      leading: true,
+      trailing: true,
+      resultCallback: (res) => {
+        console.log('callback res', res)
+      }
+    })
+    const tempCallback = (...args) => {
+      console.log("🚀 ~ file: throttle_practice.html:37 ~ tempCallback ~ args:", args)
+      throttled.apply(args[0].currentTarget, args).then(res => {
+        console.log('promise res', res)
+      }).catch(err => {
+        console.log('promise err', err)
+      })
+    }
+    inputEl.oninput = tempCallback
+
+    const cancelBtn = document.querySelector('button')
+    cancelBtn.onclick = () => {
+      throttled.cancel()
+    }
+  </script>
+</body>
+</html>
