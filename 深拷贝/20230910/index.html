@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+
+  <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+  <!-- <script src="../02_实现深拷贝函数.js"></script> -->
+  <!-- <script src="./deepCopy.js"></script> -->
+
+  <script>
+
+    // const obj1 = Object.create({ nation: 'China' })
+    // obj1.name = 'zhj'
+    // console.log(obj1)
+
+    // console.log(Object.getPrototypeOf(obj))
+    // console.log(Object.getPrototypeOf(Object.getPrototypeOf(obj)))
+    // console.log(Object.getPrototypeOf(Object.getPrototypeOf(Object.getPrototypeOf(obj))))
+
+    // const newObj1 = _.cloneDeep(obj1)
+    // const newObj1 = deepClone(obj1)
+    // console.log('newObj1', newObj1)
+
+    // function Person() {}
+    // function Student() {}
+    // Student.prototype = Person
+    // var objects = Student.prototype;
+    // console.log('%O', Student)
+
+    // var deep = _.cloneDeep(objects);
+    // console.log(deep)
+    // console.log(deep === objects)
+
+    function createData(depth, breadth) {
+      const obj = {}
+      let temp = obj
+      for (let i = 0; i < depth; i++) {
+        temp = temp['data'] = {}
+        for (let j = 0; j < breadth; j++) {
+          temp[j] = j
+        }
+      }
+      return obj
+    }
+    const data = createData(2000)
+    data.myself = data
+    console.log(data)
+    console.log(_.cloneDeep(data)) // Uncaught RangeError: Maximum call stack size exceeded
+
+  </script>
+
+</body>
+</html>

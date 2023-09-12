@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@jsmini/clone": "^0.4.2"
+  }
+}
