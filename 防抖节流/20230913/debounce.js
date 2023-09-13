@@ -3,27 +3,29 @@ function now() {
   if (Date.now) return Date.now()
   return new Date().getTime()
 }
-function debounce(fn, wait, immediate = false, resultCallback) {
+function debounce(fn, wait, immediate = false) {
   let timer = null
   let isInvoked = false
   let previous = 0
   let passed = 0
   function debounced(...args) {
-    if (timer) clearTimeout(timer)
-    passed = now() - previous
-    previous = now()
-    if (immediate && (!isInvoked || passed >= wait)) {
-      const result = fn.apply(this, args)
-      if (resultCallback && typeof resultCallback === 'function') resultCallback(result)
-      isInvoked = true
-    } else {
-      timer = setTimeout(() => {
+    return new Promise((resolve, reject) => {
+      if (timer) clearTimeout(timer)
+      passed = now() - previous
+      previous = now()
+      if (immediate && (!isInvoked || passed >= wait)) {
         const result = fn.apply(this, args)
-        if (resultCallback && typeof resultCallback === 'function') resultCallback(result)
-        timer = null
-        isInvoked = false
-      }, wait)
-    }
+        resolve(result)
+        isInvoked = true
+      } else {
+        timer = setTimeout(() => {
+          const result = fn.apply(this, args)
+          resolve(result)
+          timer = null
+          isInvoked = false
+        }, wait)
+      }
+    })
   }
 
   debounced.cancel = function() {
