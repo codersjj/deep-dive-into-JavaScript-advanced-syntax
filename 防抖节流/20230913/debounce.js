@@ -1,9 +1,9 @@
 function debounce(fn, wait) {
   let timer = null
-  function debounced() {
+  function debounced(...args) {
     if (timer) clearTimeout(timer)
     timer = setTimeout(() => {
-      fn()
+      fn.apply(this, args)
       timer = null
     }, wait)
   }
