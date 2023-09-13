@@ -3,7 +3,7 @@ function now() {
   if (Date.now) return Date.now()
   return new Date().getTime()
 }
-function debounce(fn, wait, immediate = false) {
+function debounce(fn, wait, immediate = false, resultCallback) {
   let timer = null
   let isInvoked = false
   let previous = 0
@@ -13,11 +13,13 @@ function debounce(fn, wait, immediate = false) {
     passed = now() - previous
     previous = now()
     if (immediate && (!isInvoked || passed >= wait)) {
-      fn.apply(this, args)
+      const result = fn.apply(this, args)
+      if (resultCallback && typeof resultCallback === 'function') resultCallback(result)
       isInvoked = true
     } else {
       timer = setTimeout(() => {
-        fn.apply(this, args)
+        const result = fn.apply(this, args)
+        if (resultCallback && typeof resultCallback === 'function') resultCallback(result)
         timer = null
         isInvoked = false
       }, wait)
