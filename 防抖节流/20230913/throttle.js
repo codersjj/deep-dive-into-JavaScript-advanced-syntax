@@ -8,7 +8,7 @@ function throttle(fn, wait, option = { leading: true, trailing: true }) {
   const { leading, trailing } = option
   let previous = 0
   let timer = null
-  function throttled() {
+  function throttled(...args) {
     const _now = now()
     if (!leading && !previous) previous = _now
     const remaining = wait - (_now - previous)
@@ -17,11 +17,11 @@ function throttle(fn, wait, option = { leading: true, trailing: true }) {
         clearTimeout(timer)
         timer = null
       }
-      fn()
+      fn.apply(this, args)
       previous = _now
     } else if (trailing && !timer) {
       timer = setTimeout(() => {
-        fn()
+        fn.apply(this, args)
         previous = leading ? now() : 0
         timer = null
       }, remaining)
