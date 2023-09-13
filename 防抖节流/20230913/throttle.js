@@ -5,7 +5,7 @@ function now() {
   return new Date().getTime()
 }
 function throttle(fn, wait, option = { leading: true, trailing: true }) {
-  const { leading, trailing } = option
+  const { leading, trailing, resultCallback } = option
   let previous = 0
   let timer = null
   function throttled(...args) {
@@ -17,11 +17,13 @@ function throttle(fn, wait, option = { leading: true, trailing: true }) {
         clearTimeout(timer)
         timer = null
       }
-      fn.apply(this, args)
+      const result = fn.apply(this, args)
+      if (resultCallback && typeof resultCallback === 'function') resultCallback(result)
       previous = _now
     } else if (trailing && !timer) {
       timer = setTimeout(() => {
-        fn.apply(this, args)
+        const result = fn.apply(this, args)
+        if (resultCallback && typeof resultCallback === 'function') resultCallback(result)
         previous = leading ? now() : 0
         timer = null
       }, remaining)
