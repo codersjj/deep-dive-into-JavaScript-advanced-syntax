@@ -7,13 +7,24 @@ function now() {
 function throttle(fn, wait, option = { leading: true, trailing: true }) {
   const { leading, trailing } = option
   let previous = 0
+  let timer = null
   function throttled() {
     const _now = now()
     if (!leading && !previous) previous = _now
     const remaining = wait - (_now - previous)
     if (remaining <= 0) {
+      if (timer) {
+        clearTimeout(timer)
+        timer = null
+      }
       fn()
       previous = _now
+    } else if (trailing && !timer) {
+      timer = setTimeout(() => {
+        fn()
+        previous = leading ? now() : 0
+        timer = null
+      }, remaining)
     }
   }
   return throttled
