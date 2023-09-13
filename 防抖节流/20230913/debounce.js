@@ -24,5 +24,15 @@ function debounce(fn, wait, immediate = false) {
     }
   }
 
+  debounced.cancel = function() {
+    if (timer) {
+      clearTimeout(timer)
+      timer = null
+    }
+    isInvoked = false
+    previous = 0
+    passed = 0
+  }
+
   return debounced
 }
