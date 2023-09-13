@@ -27,5 +27,12 @@ function throttle(fn, wait, option = { leading: true, trailing: true }) {
       }, remaining)
     }
   }
+  throttled.cancel = function() {
+    previous = 0
+    if (timer) {
+      clearTimeout(timer)
+      timer = null
+    }
+  }
   return throttled
 }
