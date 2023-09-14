@@ -56,6 +56,7 @@ function deepCopyLoop(value) {
     }
   ]
 
+  const uniqueList = []
   while (loopList.length) {
     const node = loopList.pop()
     const { sourceData, parent, key } = node
@@ -65,6 +66,13 @@ function deepCopyLoop(value) {
     if (key !== undefined) {
       res = parent[key] = {}
     }
+
+    const uniqueData = uniqueList.find(item => item.sourceData === sourceData)
+    if (uniqueData) {
+      parent[key] = uniqueData.parent
+      continue
+    }
+    uniqueList.push(node)
 
     for (let key in sourceData) {
       if (Object.prototype.hasOwnProperty.call(sourceData, key)) {
@@ -83,3 +91,28 @@ function deepCopyLoop(value) {
 
   return root
 }
+
+function createData(depth, breadth) {
+  let data = {}
+  let temp = data
+  for (let i = 0; i < depth; i++) {
+    temp = temp['data'] = {}
+    for (let j = 0; j < breadth; j++) {
+      temp[j] = j
+    }
+  }
+  return data
+}
+
+const data = createData(2, 1)
+data.myself = data
+console.log(data)
+console.log(deepCopyLoop(data))
+
+var b = {val: 1};
+var a = {a1: b, a2: b};
+
+console.log(a.a1 === a.a2) // true
+
+var c = deepCopyLoop(a);
+console.log(c.a1 === c.a2) // false
