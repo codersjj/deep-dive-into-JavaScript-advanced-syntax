@@ -2,7 +2,7 @@ function isObject(value) {
   const type = typeof value
   return (type === 'object' && value !== null) || type === 'function'
 }
-function deepCopy(value, map = new Map()) {
+function deepCopy(value, map = new WeakMap()) {
   if (typeof value === 'symbol') return Symbol(value.description)
   if (!isObject(value)) return value
 
