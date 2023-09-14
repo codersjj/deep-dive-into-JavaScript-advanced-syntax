@@ -7,6 +7,12 @@ function deepCopy(value) {
   if (!isObject(value)) return value
 
   if (typeof value === 'function') return value
+  if (Object.prototype.toString.call(value) === '[object Map]') {
+    return new Map([...value])
+  }
+  if (Object.prototype.toString.call(value) === '[object Set]') {
+    return new Set([...value])
+  }
 
   const newValue = Array.isArray(value) ? [] : {}
   Object.keys(value).forEach(key => {
