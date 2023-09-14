@@ -34,3 +34,52 @@ function deepCopy(value, map = new WeakMap()) {
   })
   return newValue
 }
+
+function type(value) {
+  // [object Object]
+  return Object.prototype.toString.call(value).slice(8, -1).toLowerCase()
+}
+function isClone(value) {
+  const t = type(value)
+  return t === 'object' || t === 'array'
+}
+function deepCopyLoop(value) {
+  // 这里只对对象和数组进行深拷贝
+  const root = Array.isArray(value) ? [] : {}
+
+  // 定义一个栈，用来模拟递归
+  const loopList = [
+    {
+      sourceData: value,
+      parent: root,
+      key: undefined
+    }
+  ]
+
+  while (loopList.length) {
+    const node = loopList.pop()
+    const { sourceData, parent, key } = node
+
+    // 初始化
+    let res = parent
+    if (key !== undefined) {
+      res = parent[key] = {}
+    }
+
+    for (let key in sourceData) {
+      if (Object.prototype.hasOwnProperty.call(sourceData, key)) {
+        if (isClone(sourceData[key])) {
+          loopList.push({
+            sourceData: sourceData[key],
+            parent: res,
+            key
+          })
+        } else {
+          res[key] = sourceData[key]
+        }
+      }
+    }
+  }
+
+  return root
+}
