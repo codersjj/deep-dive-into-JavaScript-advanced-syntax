@@ -5,6 +5,8 @@ function isObject(value) {
 function deepCopy(value) {
   if (!isObject(value)) return value
 
+  if (typeof value === 'function') return value
+
   const newValue = Array.isArray(value) ? [] : {}
   Object.keys(value).forEach(key => {
     newValue[key] = deepCopy(value[key])
