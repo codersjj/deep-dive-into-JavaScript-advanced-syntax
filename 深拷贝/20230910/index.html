@@ -35,21 +35,38 @@
     // console.log(deep)
     // console.log(deep === objects)
 
-    function createData(depth, breadth) {
-      const obj = {}
-      let temp = obj
-      for (let i = 0; i < depth; i++) {
-        temp = temp['data'] = {}
-        for (let j = 0; j < breadth; j++) {
-          temp[j] = j
-        }
+    // function createData(depth, breadth) {
+    //   const obj = {}
+    //   let temp = obj
+    //   for (let i = 0; i < depth; i++) {
+    //     temp = temp['data'] = {}
+    //     for (let j = 0; j < breadth; j++) {
+    //       temp[j] = j
+    //     }
+    //   }
+    //   return obj
+    // }
+    // const data = createData(2000)
+    // data.myself = data
+    // console.log(data)
+    // console.log(_.cloneDeep(data)) // Uncaught RangeError: Maximum call stack size exceeded
+
+    const o = Object.defineProperties({}, {
+      a: {
+        configurable: true,
+        enumerable: false,
+        writable: true,
+        value: 1
+      },
+      b: {
+        configurable: true,
+        enumerable: true,
+        writable: true,
+        value: 2
       }
-      return obj
-    }
-    const data = createData(2000)
-    data.myself = data
-    console.log(data)
-    console.log(_.cloneDeep(data)) // Uncaught RangeError: Maximum call stack size exceeded
+    })
+    console.log(o)
+    console.log(_.cloneDeep(o))
 
   </script>
 
