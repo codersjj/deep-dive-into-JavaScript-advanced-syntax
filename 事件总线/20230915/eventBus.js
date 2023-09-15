@@ -30,6 +30,22 @@ class JJEventBus {
       eventCallback.call(thisArg, payload)
     })
   }
+
+  off(eventName, eventCallback) {
+    const handlers = this.eventHandlerMap[eventName]
+    if (!handlers) return
+    if (!eventCallback) {
+      this.eventHandlerMap[eventName] = []
+    }
+    else {
+      for (let i = handlers.length - 1; i >= 0; i--) {
+        const handler = handlers[i]
+        if (handler.eventCallback === eventCallback) {
+          handlers.splice(i, 1)
+        }
+      }
+    }
+  }
 }
 
 const eventBus = new JJEventBus()
