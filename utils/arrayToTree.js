@@ -45,8 +45,12 @@ function arrayToTreeV2(arr, root = null) {
   arr.forEach(item => {
     const { id, parentId } = item
 
-    // 映射对象中不存在该节点时，初始化该节点（如果映射对象中已存在该节点，意味着之前该节点已被初始化为父节点，无需再做初始化）
-    if (!idToNodeMap[id]) idToNodeMap[id] = { ...item }
+    // 映射对象中不存在该节点时，初始化该节点（如果映射对象中已存在该节点，意味着之前该节点已被初始化为父节点，则还需要初始化除 children 之外的属性）
+    if (!idToNodeMap[id]) {
+      idToNodeMap[id] = { ...item }
+    } else {
+      idToNodeMap[id] = { ...item, ...idToNodeMap[id] }
+    }
 
     if (parentId === root) { // 根节点
       result.push(idToNodeMap[id]) // 加入到 result 数组中
